@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Location</title>
+    <script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+
+    <style>
+        article{
+            width: 600px;
+            height: 400px;
+            margin: auto;
+            border: 2px solid red;
+        }
+        button{
+            padding: 20px;
+            margin: auto;
+            background: yellow;
+            border: 2px solid red;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="displaymap()">Display Map</button>
+    <article id="my_map"></article>
+
+    <script>
+        function displaymap(){
+
+            if(navigator.geolocation){
+                 navigator.geolocation.getCurrentPosition(function successCallBack(posRes){
+                    let latitude    = posRes.coords.latitude;
+                    let longitude   = posRes.coords.longitude;
+
+                    //console.log(latitude+""+longitude);
+                    //merge the latitude and longitude
+                    let mergeposition = new google.maps.LatLng(latitude,longitude);
+
+                    var myOptions = {
+                        center:mergeposition,
+                        zoom:15,
+                        mapTypeControl:true,
+                        navigationControlOptions: {style:google.maps.NavigationControlStyle.SMALL}
+                    }
+
+                    let maps = new google.maps.Map(document.getElementById("my_map"),myOptions);
+
+                    var markers = new google.maps.Marker({position:mergeposition, map:maps, title:"You are Here!"});
+
+                 },function errorCallBack(errRos){
+                    switch(errRos.code){
+                        case errRos.TIMEOUT:
+                            document.getElementById("my_map").innerHTML = "Timeout Error !!!!";
+                            break; 
+
+                        case errRos.POSITION_UNAVAILABLE:
+                            document.getElementById("my_map").innerHTML = "POSITION_UNAVAILABLE !!!!";
+                            break;
+
+                        case errRos.PERMISSION_DENIED:
+                            document.getElementById("my_map").innerHTML = "PERMISSION_DENIED !!!!";
+                            break;
+
+                        case errRos.UNKNOWN_ERROR:
+                            document.getElementById("my_map").innerHTML = "UNKNOWN_ERROR !!!!";
+                            break;
+                    }
+
+                 });
+
+            } else {
+                console.log("Broweser Not Supported");
+            }
+
+        }
+    </script>
+</body>
+</html>
